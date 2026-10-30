@@ -28,7 +28,7 @@ Open-source community usability, cross-platform development, reproducibility and
 
 **No repository consolidation or merge is planned or required.** Historical scanner code stays in `bliss-mood-poc` for reproducibility; new scanner development belongs here. Source and binary packaging independence must not be confused with musical or legal independence.
 
-For initial compatibility the existing executable names remain `bliss-mood(.exe)` and `bliss-essentia-worker(.exe)`. Their later renaming is a distinct, tested change. `cargo build` compiles the Rust CLI; upstream Essentia-dependent native C++ worker requires a separate build and installation.
+**Executable naming (30 October 2026):** The independent Rust package and CLI are now `essentia-analyser(.exe)` (historical name `bliss-mood`); the CMake-compiled native C++ process is `essentia-worker(.exe)` (historical target `bliss-essentia-worker`). This is **not** a repository merge. Existing CLI options and EFW1/REQ1/RES1 transport are retained. See [executable renaming](executable-renaming.md). `cargo build` compiles only the Rust CLI; the original Essentia C++ worker still requires a separately installed native Essentia library.
 
 ## Open source, NonCommercial and free of charge are different things
 

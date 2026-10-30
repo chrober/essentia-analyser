@@ -1200,7 +1200,7 @@ mod tests {
     #[test]
     fn manifest_selection_reuses_scan_options_and_filters_exact_identity() {
         let dir = std::env::temp_dir().join(format!(
-            "bliss-mood-manifest-cohort-{}-{}", std::process::id(),
+            "essentia-analyser-manifest-cohort-{}-{}", std::process::id(),
             std::time::SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos()
         ));
         let music = dir.join("music");
@@ -1236,7 +1236,7 @@ mod tests {
     fn manifest_rejects_existing_symlink_outside_source_root() {
         use std::os::unix::fs::symlink;
         let dir = std::env::temp_dir().join(format!(
-            "bliss-mood-manifest-symlink-{}-{}", std::process::id(),
+            "essentia-analyser-manifest-symlink-{}-{}", std::process::id(),
             std::time::SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos()
         ));
         let music = dir.join("music");
@@ -1262,7 +1262,7 @@ mod tests {
     #[test]
     fn manifest_preserves_order_and_rejects_aliases_or_duplicates() {
         let file = std::env::temp_dir().join(format!(
-            "bliss-mood-manifest-{}-{}.txt", std::process::id(),
+            "essentia-analyser-manifest-{}-{}.txt", std::process::id(),
             std::time::SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos()
         ));
         std::fs::write(&file, "Artist/B.flac\nArtist/A.flac\n").unwrap();
@@ -1331,7 +1331,7 @@ mod tests {
     #[test]
     fn generic_storage_preserves_legacy_rows_and_other_models() {
         let db = std::env::temp_dir().join(format!(
-            "bliss-mood-feature-test-{}-{}.db", std::process::id(),
+            "essentia-analyser-feature-test-{}-{}.db", std::process::id(),
             std::time::SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos(),
         ));
         let legacy = crate::Report {
@@ -1388,7 +1388,7 @@ mod tests {
     #[test]
     fn voice_softmax_persists_without_changing_mood_or_genre() {
         let db = std::env::temp_dir().join(format!(
-            "bliss-mood-voice-{}-{}.db", std::process::id(),
+            "essentia-analyser-voice-{}-{}.db", std::process::id(),
             std::time::SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos(),
         ));
         let track = "Artist/Album/voice.flac";
@@ -1431,7 +1431,7 @@ mod tests {
     #[test]
     fn invalid_second_head_rolls_back_entire_feature_transaction() {
         let db = std::env::temp_dir().join(format!(
-            "bliss-mood-feature-rollback-{}-{}.db", std::process::id(),
+            "essentia-analyser-feature-rollback-{}-{}.db", std::process::id(),
             std::time::SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos(),
         ));
         let mut report = fake_report();

@@ -16,7 +16,7 @@ def missing_notices_kit(base):
     provenance["packages"][key]["installed_license_files"] = []
     provenance["packages"][key]["upstream_url"] = "https://example.org/provenance-only"
     overwrite(kit / "NATIVE-PROVENANCE.json", provenance)
-    native["files"]["bliss-essentia-worker.exe"]["imports"] = [
+    native["files"]["essentia-worker.exe"]["imports"] = [
         "KERNEL32.dll", "libessentia.dll"
     ]
     native["files"]["libessentia.dll"]["imports"] = [
@@ -44,7 +44,7 @@ class LicenseGapBacklogTests(unittest.TestCase):
             self.assertEqual(row["owned_native_binary_names"], ["libsamplerate-0.dll"])
             self.assertEqual(
                 row["manifest_recorded_import_chain_examples"][0],
-                ["bliss-essentia-worker.exe", "libessentia.dll", "libsamplerate-0.dll"]
+                ["essentia-worker.exe", "libessentia.dll", "libsamplerate-0.dll"]
             )
             self.assertEqual(row["declared_upstream_url_from_pacman_metadata_unverified"],
                              "https://example.org/provenance-only")

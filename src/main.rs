@@ -29,7 +29,7 @@ const CLASSIFIER: &str = "mtg_jamendo_moodtheme-discogs-effnet-1.onnx";
 const LABELS: &str = "mtg_jamendo_moodtheme-discogs-effnet-1.json";
 
 #[derive(Parser)]
-#[command(name = "bliss-mood", about = "Experimental ONNX mood analysis (not yet Essentia-validated)")]
+#[command(name = "essentia-analyser", about = "Offline Essentia audio feature analysis with native C++ and ONNX backends")]
 struct Cli {
     #[command(subcommand)]
     action: Action,
@@ -553,7 +553,7 @@ mod manifest_cli_tests {
             vec!["--max-workers", "6"],
             vec!["--adaptive-min-completed-songs", "8"],
         ] {
-            let mut args = vec!["bliss-mood", "scan-features",
+            let mut args = vec!["essentia-analyser", "scan-features",
                 "--bliss-db", "cohort.db", "--db", "features.db"];
             args.extend(extra);
             assert!(Cli::try_parse_from(args).is_err());
@@ -564,7 +564,7 @@ mod manifest_cli_tests {
     fn fixed_worker_cli_keeps_opt_in_auto_and_priority() {
         for workers in ["1", "2", "4", "auto"] {
             for priority in ["normal", "below-normal", "above-normal"] {
-                let args = ["bliss-mood", "scan-features",
+                let args = ["essentia-analyser", "scan-features",
                     "--bliss-db", "cohort.db", "--db", "features.db",
                     "--workers", workers, "--priority", priority];
                 let cli = Cli::try_parse_from(args).unwrap();
@@ -578,11 +578,11 @@ mod manifest_cli_tests {
             }
         }
         assert!(Cli::try_parse_from([
-            "bliss-mood", "scan-features", "--bliss-db", "cohort.db",
+            "essentia-analyser", "scan-features", "--bliss-db", "cohort.db",
             "--db", "features.db", "--priority", "realtime",
         ]).is_err());
         let cli = Cli::try_parse_from([
-            "bliss-mood", "scan-features", "--bliss-db", "cohort.db",
+            "essentia-analyser", "scan-features", "--bliss-db", "cohort.db",
             "--db", "features.db",
         ]).unwrap();
         assert!(matches!(cli.action, Action::ScanFeatures { workers, .. } if workers == "1"));
@@ -591,7 +591,7 @@ mod manifest_cli_tests {
     #[test]
     fn source_selection_is_exclusive_and_manifest_requires_root() {
         let valid = Cli::try_parse_from([
-            "bliss-mood", "scan-features", "--tracks-file", "cohort.txt",
+            "essentia-analyser", "scan-features", "--tracks-file", "cohort.txt",
             "--source-root", "music", "--db", "features.db",
             "--workers", "2", "--threads", "1"
         ]).unwrap();
@@ -603,17 +603,17 @@ mod manifest_cli_tests {
             _ => panic!("Expected scan-features"),
         }
         assert!(Cli::try_parse_from([
-            "bliss-mood", "scan-features", "--db", "features.db",
+            "essentia-analyser", "scan-features", "--db", "features.db",
         ]).is_err());
         assert!(Cli::try_parse_from([
-            "bliss-mood", "scan-features", "--tracks-file", "cohort.txt", "--db", "features.db",
+            "essentia-analyser", "scan-features", "--tracks-file", "cohort.txt", "--db", "features.db",
         ]).is_err());
         assert!(Cli::try_parse_from([
-            "bliss-mood", "scan-features", "--tracks-file", "cohort.txt",
+            "essentia-analyser", "scan-features", "--tracks-file", "cohort.txt",
             "--source-root", "music", "--bliss-db", "bliss.db", "--db", "features.db",
         ]).is_err());
         assert!(Cli::try_parse_from([
-            "bliss-mood", "scan-features", "--bliss-db", "bliss.db", "--db", "features.db",
+            "essentia-analyser", "scan-features", "--bliss-db", "bliss.db", "--db", "features.db",
         ]).is_ok());
     }
 }

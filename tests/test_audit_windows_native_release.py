@@ -16,13 +16,13 @@ def fixture(root):
     kit = root / "dev-kit"
     worker = kit / "essentia-worker"
     worker.mkdir(parents=True)
-    names = ("bliss-essentia-worker.exe", "libessentia.dll",
+    names = ("essentia-worker.exe", "libessentia.dll",
              "libsamplerate-0.dll")
     for name in names:
         fake_pe(worker / name)
     paths = {
         "THIRD-PARTY-NOTICES/essentia-upstream/COPYING.txt": "AGPL",
-        "THIRD-PARTY-NOTICES/bliss-mood-project/LICENSE": "MIT",
+        "THIRD-PARTY-NOTICES/essentia-analyser-project/LICENSE": "MIT",
         "THIRD-PARTY-NOTICES/mingw-w64-x86_64-libsamplerate/001-LICENSE.txt":
             "libsamplerate license",
     }
@@ -54,7 +54,7 @@ def fixture(root):
         "binaries": {
             names[0]: {
                 "origin": "this project", "license_notices": [
-                    "THIRD-PARTY-NOTICES/bliss-mood-project/LICENSE"
+                    "THIRD-PARTY-NOTICES/essentia-analyser-project/LICENSE"
                 ],
             },
             names[1]: {

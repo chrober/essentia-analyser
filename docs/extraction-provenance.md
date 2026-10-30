@@ -2,6 +2,8 @@
 
 Date: 30 October 2026
 
+> **Historical baseline:** This records the source extraction *before the dedicated executable naming PR*. The current Rust package/CLI is `essentia-analyser`, the native CMake worker target is `essentia-worker`. The old names below identify the original imported source and are retained as historical provenance. See [executable rename](executable-renaming.md).
+
 | Field | Fixed value |
 | --- | --- |
 | Source repository | [`chrober/bliss-mood-poc`](https://github.com/chrober/bliss-mood-poc) |
