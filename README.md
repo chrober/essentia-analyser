@@ -2,6 +2,16 @@
 
 Portable offline **Rust + original Essentia C++ audio feature analyser**. This is the dedicated application repository extracted from [`bliss-mood-poc`](https://github.com/chrober/bliss-mood-poc). The latter remains an independent research and experiment laboratory (WP1 General Metric, WP2 Personal Metric, WP3 Bliss↔Essentia relationships).
 
+## Mission: free and open source for the Lyrion community
+
+**This is a non-commercial community project, not a commercial product.** Its code, development, documentation and intended end-user availability are oriented toward the **Lyrion Music Server community**, freely accessible and free of charge. We are not planning a paid edition, a closed-source product or a commercial model service.
+
+We want to make offline music-feature analysis practical for community members on Windows, Linux, macOS and smaller systems where technically supported. The scanner, [Essentia Similarity](https://github.com/chrober/essentia-similarity) and the optional Lyrion Guidance integration remain **separate repositories with distinct responsibilities**. [`bliss-mood-poc`](https://github.com/chrober/bliss-mood-poc) stays the general research laboratory; **no repository merge is proposed**.
+
+Our own source is MIT-licensed (subject to source provenance review); that licence permits downstream commercial reuse even though **we do not intend commercial use**. Essentia C++ (AGPL), FFmpeg and the separately supplied MTG/ONNX model weights retain their **own** terms. In particular, the external model weights must **not** be described as MIT/OSI-open-source merely because the project is free and open source. Noncommercial intent does not exempt a publicly redistributed native binary package from licence compliance.
+
+**Read the [community mission and distribution policy](docs/community-project-policy.md)** for the project's intended use, source-first installation strategy, free community binary goals and precise separation between development and package-release checks.
+
 ## Applications included
 
 - **`bliss-mood`** (`bliss-mood.exe` on Windows): existing Rust CLI for decoding/analysis orchestration, persistent feature extraction, bounded fixed and auto worker parallelism, ONNX Runtime, model fingerprinting and SQLite sidecars. This initial extraction intentionally preserves the old executable name and CLI flags; a separately tested future rename can produce `essentia-analyser`.
@@ -22,6 +32,8 @@ cargo run -- scan-features --help
 To use the original C++ worker, build it with the separately provisioned upstream Essentia and compiler/toolchain described in [`native/README.md`](native/README.md); then pass it explicitly to the Rust CLI. FFmpeg/ffprobe and the independently obtained ONNX model files are prerequisites as documented in the scanner's existing workflow. No third-party audio or ONNX files are vendored.
 
 ## Distribution and licenses
+
+**Current packaging gate (30 Oct 2026): `distribution_release_status=BLOCKED`, `release_approved=false` for an unaudited public native bundle.** This does **not** block continued open-source development or the aim of convenient, free community releases. The sources are publicly available; **a distributable bundle of original Essentia/FFmpeg/worker/DLL binaries or third-party MTG models is not yet approved**. The [current license and distribution audit](docs/licensing-compliance-review-20261030.md) records the actual MIT/AGPL/FFmpeg/Creative-Commons distinctions, the 17 historic native notice gaps, the model-license page conflict, and the exact steps before any binary release. Model downloads by end users do not waive model terms or automatically resolve the program-combination question.
 
 **Caution:** Successful compilation and numerical parity do **not** grant permission to redistribute upstream Essentia, FFmpeg, runtime DLLs, audio datasets or third-party ONNX models. This public repository is source-only. The native Essentia/FFmpeg dependency inventory and license notices require separate approval. Prior public development artifact packaging is not automatically authorized. See [licensing strategy](docs/essentia-licensing-distribution-strategy.md), [release qualification](docs/release-qualification-gates.md), and [extraction provenance](docs/extraction-provenance.md).
 
