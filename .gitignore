@@ -1,0 +1,52 @@
+# Rust build outputs and downloaded model weights (never commit native binaries)
+/target/
+/models/
+/bin/
+
+# Locally generated benchmark runs and their copied test databases
+/benchmark-*/
+
+# Locally populated and inspected analysis databases (Bliss stays external)
+/*.db
+/*.db-shm
+/*.db-wal
+/*.db-journal
+/*.sqlite
+/*.sqlite3
+/*.sqlite-shm
+/*.sqlite-wal
+/*.sqlite3-shm
+/*.sqlite3-wal
+
+# Locally generated Mood QA / classification exports.
+# Restrict the globs to the repo root so tracked test fixtures in subfolders
+# remain visible.
+/mood-full.json
+/mood-quality-*.csv
+
+# Private local environment and runtime caches
+.env
+.env.*
+!.env.example
+__pycache__/
+.pytest_cache/
+.venv/
+*.py[cod]
+
+# Audio and large model binaries
+*.wav
+*.mp3
+*.flac
+*.onnx
+*.pb
+*.ckpt
+*.exe
+
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Deliberately do NOT ignore Cargo.lock: this is a Rust binary application.
+# Version Cargo.lock once so CI and developer builds resolve the same versions.

@@ -1,0 +1,2 @@
+imageio-ffmpeg==0.6.0
+ffprobe-binaries-only==0.1.2

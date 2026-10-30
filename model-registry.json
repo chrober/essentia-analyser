@@ -1,0 +1,35 @@
+{
+  "schema_version": 2,
+  "models": [
+    {
+      "id": "moodtheme",
+      "capability": "mood_theme",
+      "embedding_model": "discogs-effnet-bsdynamic-1.onnx",
+      "classification_model": "mtg_jamendo_moodtheme-discogs-effnet-1.onnx",
+      "metadata": "mtg_jamendo_moodtheme-discogs-effnet-1.json",
+      "embedding_dimensions": 1280,
+      "expected_classes": 56,
+      "output_type": "sigmoid"
+    },
+    {
+      "id": "genre",
+      "capability": "genre",
+      "embedding_model": "discogs-effnet-bsdynamic-1.onnx",
+      "classification_model": "mtg_jamendo_genre-discogs-effnet-1.onnx",
+      "metadata": "mtg_jamendo_genre-discogs-effnet-1.json",
+      "embedding_dimensions": 1280,
+      "expected_classes": 87,
+      "output_type": "sigmoid"
+    },
+    {
+      "id": "voice",
+      "capability": "voice_presence",
+      "embedding_model": "discogs-effnet-bsdynamic-1.onnx",
+      "classification_model": "voice_instrumental-discogs-effnet-1.onnx",
+      "metadata": "voice_instrumental-discogs-effnet-1.json",
+      "embedding_dimensions": 1280,
+      "expected_classes": 2,
+      "output_type": "softmax"
+    }
+  ]
+}
