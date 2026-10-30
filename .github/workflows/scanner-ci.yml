@@ -1,0 +1,72 @@
+name: Rust scanner and native IPC fixture (no redistributed binaries)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scanner-linux:
+    name: Rust and C++ protocol fixture / Linux
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Compile native IPC fixture (not upstream Essentia)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/fixture
+          c++ -std=c++17 -O2 -Wall -Wextra -o build/fixture/essentia-ipc-fixture native/protocol_fixture.cpp
+      - name: Run locked scanner unit tests with real native protocol fixture
+        shell: bash
+        env:
+          ESSENTIA_IPC_FIXTURE_EXE: ${{ github.workspace }}/build/fixture/essentia-ipc-fixture
+        run: |
+          set -euo pipefail
+          cargo test --locked
+      - name: Verify scanner CLI builds
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo build --locked
+          cargo run --locked -- scan-features --help
+      - name: Verify fixture-safe scanner scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p 'test_sample_mood_quality.py'
+          python3 -m unittest discover -s tests -p 'test_native_cpp_end_to_end.py'
+          python3 -m unittest discover -s tests -p 'test_package_essentia_worker_windows.py'
+
+  scanner-windows:
+    name: Rust and C++ protocol fixture / Windows
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build C++ fixture without original Essentia library
+        shell: pwsh
+        run: |
+          cmake -S native/protocol-fixture -B build/native-protocol-fixture -A x64
+          if ($LASTEXITCODE -ne 0) { throw 'CMake configure failed' }
+          cmake --build build/native-protocol-fixture --config Release
+          if ($LASTEXITCODE -ne 0) { throw 'C++ IPC fixture build failed' }
+          $path = (Resolve-Path build/native-protocol-fixture/Release/essentia-protocol-fixture.exe).Path
+          "ESSENTIA_IPC_FIXTURE_EXE=$path" >> $env:GITHUB_ENV
+      - name: Run Windows scanner Rust tests with native IPC fixture
+        shell: pwsh
+        run: |
+          cargo test --locked
+          if ($LASTEXITCODE -ne 0) { throw 'Windows Rust scanner tests failed' }
+          cargo build --locked
+          if ($LASTEXITCODE -ne 0) { throw 'Windows Rust scanner build failed' }
+          & ./target/debug/bliss-mood.exe scan-features --help
+          if ($LASTEXITCODE -ne 0) { throw 'Windows CLI smoke failed' }

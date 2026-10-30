@@ -1,0 +1,23 @@
+# Copy-paste prompt: return to Similarity Metric Evaluation (PR #16)
+
+Ich möchte die ursprüngliche **Similarity Metric Evaluation** in Repository **https://github.com/chrober/bliss-mood-poc**, Draft **PR #16** (`feat/similarity-metric-evaluation`) fortsetzen.
+
+**Wichtiger abgeschlossener Integrationsstand:** Die statische native Multi-Worker-Analyse wurde über **PR #20** nach `main` integriert. Der maßgebliche Quellcode-Integrationscommit ist **`783b05761b6b322a85753acded63ffe336874a6d`**. Er hat Git-Tree-SHA **`60695657fad43d00e6a080ba3a617d428e172f97`**, identisch zum geprüften PR-#20-Head **`da8fecee23930c2e52abcb473a62b8178b2d5474`**. Prüfe die jeweils aktuellen Live-Branches und CI-Ergebnisse, statt auf ältere historische SHAs zu vertrauen.
+
+**Zuerst lesen:**
+- `docs/handback-multi-worker-to-similarity-20261028.md`
+- `docs/multi-worker-song-analysis-final.md`
+- `docs/essentia-licensing-distribution-strategy.md`
+- die bestehenden PR-#16-Similarity-Handover- und Metrik-Evaluationsdokumente.
+
+**Verifizierter neuer Analyse-CLI-Stand:** Rust/Clippy CI **#40758319810**, Windows-x64-CLI-Build **#40758319812**, originale Essentia-C++-Linux-Integration **#40758319837**, Genre-Parität **#40758319838**, Voice-Parität **#40758319821**, native Windows-DLL-Fixture-Sicherheit **#40758319841** waren erfolgreich. Das Windows-Artefakt `bliss-mood-windows-x64` aus Run #40758319812 gehört exakt zu PR-#20-Code-SHA `da8fecee...` (tree-identisch mit `main`-Integration). Beziehe die ZIP **nur aus dem erfolgreichen, korrespondierenden Run**, kontrolliere `BUILD.txt`, `SHA256SUMS.txt` und den lokalen EXE-SHA256 selbst. **Der SHA256 des ZIP ist nicht der Hash der EXE.** Ein separater originaler nativer C++-Windows-Experimentworkflow #40758319829 war beim ersten Handback noch nicht abgeschlossen; prüfe den aktuellen Status, ohne Erfolg anzunehmen.
+
+**Funktionen in `main`:** originale persistente Essentia-C++-DSP-Worker unter der existierenden Rust-Orchestrierung, wiederverwendete ONNX-Sessions, alle drei Köpfe Mood/Theme **56D**, Genre **87D**, Voice **2D**, normalisierte gepoolte Song-Embeddings **1280D**, zentraler SQLite-Writer, manifestbasierte oder Bliss-DB-basierte Songauswahl, strikte unveränderte Track-Identität, Resume/Skip und sichere Ausgabe. Nutze bei parallelem Betrieb **`--threads 1`**. `--workers N` hält die konfigurierte Poolkapazität während des Scans fest; explizites `--workers auto` wählt **einmalig CPU-basiert** konservativ (maximal 8), der CLI-Default bleibt `--workers 1`. Keine dynamische Workersteuerung. Historische `--adaptive-workers`/`--adaptive-policy` werden zurückgewiesen.
+
+**Konkreter Arbeitsauftrag:** Nutze deine bestehende private Songkohorte und die verifizierte native CLI, um benötigte originale Essentia-C++-Analysen mit allen drei ONNX-Heads und vollständigen 1280D-Pooled-Embeddings mittels `scan-features --tracks-file ... --source-root ... --embedding-dir ... --audio-backend essentia --essentia-worker ... --models moodtheme,genre,voice --workers auto --threads 1` in **neuen privaten** Sidecar-/Embedding-Pfaden bereitzustellen. Musikdateien und Bliss-Datenbanken sind ausschließlich lesend zu verwenden. Halte Quellcode-, Model- und Native-Worker-Fingerprints für reproduzierbare Vergleiche fest. Verwechsle **bitgenaue Worker-Parität** nicht mit der **toleranzbasierten Referenz-Parität** des originalen Essentia C++ Frontends.
+
+**Dann setze ausschließlich PR #16 fort:** Prüfe die bereits dokumentierten Genre-/Mood-/Embedding-Distanzmetriken sowie die drei zentralen mathematischen Vergleichsansätze anhand der vorhandenen Evidenz, Songs und Hörbewertungen. Verändere vorhandene menschliche Ratings, Messdaten oder die Methodik von PR #16 nicht ohne ausdrücklichen Auftrag. Hole keine neue Autotune-Optimierung in diese Session; PR #19 wurde absichtlich **ohne Merge geschlossen**, sein Branch und Forschungsstand sowie [Backlog #21](https://github.com/chrober/bliss-mood-poc/issues/21) bleiben erhalten.
+
+**Lizenz-/Distributionsgrenze:** Das native Windows-Entwicklungskit hat weiterhin `distribution_release_status=BLOCKED` mit mindestens 17 nicht vollständig dokumentierten installierten Notice-Dateien. Der Nutzer hat den **Quellcode-Merge nach `main`** ausdrücklich genehmigt, jedoch keine ungeregelte Veröffentlichung von nativen EXE-/DLL-Paketen. Native Abhängigkeiten müssen lokal und unter eigener Lizenzprüfung bereitstehen; auch ONNX-Modelle separat. Behandle das nicht als technische Paritätsfreigabe oder Redistributable-Release.
+
+Beginne mit dem Lesen der Dokumente und der Überprüfung des neuen `main`-/PR-#16-Stands und setze die Similarity-Metrik-Evaluierung anschließend zielgerichtet fort.
