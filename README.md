@@ -23,6 +23,8 @@ To use the original C++ worker, build it with the separately provisioned upstrea
 
 ## Distribution and licenses
 
+**Release gate (30 Oct 2026): `distribution_release_status=BLOCKED`, `release_approved=false`.** The source-only repository may be developed under its documented code-provenance assumptions, but **no publicly redistributable native Essentia/FFmpeg/worker/DLL package or bundled MTG ONNX models are approved**. The [current license and distribution audit](docs/licensing-compliance-review-20261030.md) records the actual MIT/AGPL/FFmpeg/Creative-Commons distinctions, the 17 historic native notice gaps, the model-license page conflict, and the exact steps before any binary release. Model downloads by end users do not waive model terms or automatically resolve the program-combination question.
+
 **Caution:** Successful compilation and numerical parity do **not** grant permission to redistribute upstream Essentia, FFmpeg, runtime DLLs, audio datasets or third-party ONNX models. This public repository is source-only. The native Essentia/FFmpeg dependency inventory and license notices require separate approval. Prior public development artifact packaging is not automatically authorized. See [licensing strategy](docs/essentia-licensing-distribution-strategy.md), [release qualification](docs/release-qualification-gates.md), and [extraction provenance](docs/extraction-provenance.md).
 
 The previous `.github/workflows` are **not automatically enabled** here. The new CI runs only unit/fixture tests and compiler checks: **no C++ upstream Essentia distribution, model downloads, Windows DLL package uploads or published release artifacts**.
