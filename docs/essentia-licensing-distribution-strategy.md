@@ -1,5 +1,9 @@
 # Lizenz- und Distributionsstrategie: Rust-Frontend, Essentia C++ und ONNX
 
+> **HISTORICAL RESEARCH STRATEGY — CURRENT COMMUNITY MISSION (30 OCTOBER 2026):** This document was originally written in `bliss-mood-poc` during the scanner's research and Windows-native development. It remains here as an **unchanged historical risk/evidence reference**. The authoritative current intent is [`essentia-analyser`'s community project policy](community-project-policy.md): a free-of-charge **open-source, non-commercial project for the Lyrion community**; **no commercial product or repository merge is planned**. The native binary redistribution questions and 17 historical Windows notice gaps still require package-specific compliance work, **but they do not block normal source development or general research**. We are *not* pursuing a proprietary Essentia/MTG commercial licence as a project objective. See the [current scope-aware licensing audit](licensing-compliance-review-20261030.md).
+>
+
+
 > **Source-merge decision (28 October 2026):** The user requires integrating the qualified **source** of the original Essentia C++ backend and static multi-worker scanner into `main` via [PR #20](https://github.com/chrober/bliss-mood-poc/pull/20), **without treating the merge as a redistribution license grant**. The existing `distribution_release_status=BLOCKED`, `release_approved=false`, `license_inventory_complete=false` and 17 missing installed native notices remain unresolved and explicitly apply to binary packaging/publishing. No unaudited Windows native C++ EXE/DLL bundle should be publicly shipped by this merge. Legal obligations of publishing source (including AGPL-derived code) may still require independent review; this text is not legal clearance. Original research, inventories and release blocks below remain binding.
 
 
