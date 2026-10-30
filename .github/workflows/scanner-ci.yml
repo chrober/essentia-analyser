@@ -35,6 +35,7 @@ jobs:
         run: |
           set -euo pipefail
           cargo build --locked
+          test -x target/debug/essentia-analyser
           cargo run --locked -- scan-features --help
       - name: Verify fixture-safe scanner scripts
         shell: bash
@@ -43,6 +44,9 @@ jobs:
           python3 -m unittest discover -s tests -p 'test_sample_mood_quality.py'
           python3 -m unittest discover -s tests -p 'test_native_cpp_end_to_end.py'
           python3 -m unittest discover -s tests -p 'test_package_essentia_worker_windows.py'
+          python3 -m unittest discover -s tests -p 'test_executable_names.py'
+          python3 -m unittest discover -s tests -p 'test_audit_windows_native_release.py'
+          python3 -m unittest discover -s tests -p 'test_triage_windows_native_license_gaps.py'
 
   scanner-windows:
     name: Rust and C++ protocol fixture / Windows
@@ -68,5 +72,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Windows Rust scanner tests failed' }
           cargo build --locked
           if ($LASTEXITCODE -ne 0) { throw 'Windows Rust scanner build failed' }
-          & ./target/debug/bliss-mood.exe scan-features --help
+          & ./target/debug/essentia-analyser.exe scan-features --help
           if ($LASTEXITCODE -ne 0) { throw 'Windows CLI smoke failed' }
+      - name: Ensure new Rust and native worker targets are consistent
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tests -p 'test_executable_names.py'
+          if ($LASTEXITCODE -ne 0) { throw 'Executable naming contract failed' }

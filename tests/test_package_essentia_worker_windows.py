@@ -35,7 +35,7 @@ class NativeWindowsPackagingTests(unittest.TestCase):
     def test_collect_transitive_dlls_and_preserve_distinct_imports(self):
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
-            exe = fake_pe(d / "bliss-essentia-worker.exe")
+            exe = fake_pe(d / "essentia-worker.exe")
             one = fake_pe(d / "libessentia.dll")
             two = fake_pe(d / "libsamplerate-0.dll")
             names = {
@@ -58,7 +58,7 @@ class NativeWindowsPackagingTests(unittest.TestCase):
         self.assertFalse(package.system_dll("unrecognized-vendor.dll"))
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
-            exe = fake_pe(d / "bliss-essentia-worker.exe")
+            exe = fake_pe(d / "essentia-worker.exe")
             with patch.object(package, "imports", return_value=["msimg32.dll", "wsock32.dll", "gdiplus.dll", "kernel32.dll"]):
                 self.assertEqual(set(package.collect(exe, [d], d / "objdump.exe")), {exe.name})
             with patch.object(package, "imports", return_value=["unrecognized-vendor.dll"]):
@@ -76,7 +76,7 @@ class NativeWindowsPackagingTests(unittest.TestCase):
             runtime.mkdir()
             fake_pe(system / "dwrite.dll")
             fake_pe(runtime / "vendor-codec.dll")
-            exe = fake_pe(runtime / "bliss-essentia-worker.exe")
+            exe = fake_pe(runtime / "essentia-worker.exe")
             self.assertTrue(package.system_dll("dwrite.dll", system))
             self.assertFalse(package.system_dll("vendor-codec.dll", system))
             self.assertFalse(package.system_dll("dwrite.dll"))
@@ -139,7 +139,7 @@ class NativeWindowsPackagingTests(unittest.TestCase):
             base = Path(tmp)
             src = base / "inputs"
             src.mkdir()
-            exe = fake_pe(src / "bliss-essentia-worker.exe")
+            exe = fake_pe(src / "essentia-worker.exe")
             lib = fake_pe(src / "libessentia.dll")
             names = {exe.name: ["libessentia.dll"], lib.name: ["kernel32.dll"]}
             target = base / "dist"
@@ -159,13 +159,13 @@ class NativeWindowsPackagingTests(unittest.TestCase):
             base = Path(tmp)
             inp = base / "src"
             inp.mkdir()
-            exe = fake_pe(inp / "bliss-essentia-worker.exe")
+            exe = fake_pe(inp / "essentia-worker.exe")
             lib = fake_pe(inp / "libessentia.dll")
             licence = base / "AGPL.txt"
             licence.write_text("upstream licence evidence")
             mapping = base / "licenses.json"
             mapping.write_text(json.dumps({
-                "bliss-essentia-worker.exe":
+                "essentia-worker.exe":
                     {"spdx": "AGPL-3.0-or-later", "notice_file": "AGPL.txt"},
                 # Intentionally omit the dependent library
             }))

@@ -14,19 +14,20 @@ Our own source is MIT-licensed (subject to source provenance review); that licen
 
 ## Applications included
 
-- **`bliss-mood`** (`bliss-mood.exe` on Windows): existing Rust CLI for decoding/analysis orchestration, persistent feature extraction, bounded fixed and auto worker parallelism, ONNX Runtime, model fingerprinting and SQLite sidecars. This initial extraction intentionally preserves the old executable name and CLI flags; a separately tested future rename can produce `essentia-analyser`.
-- **`bliss-essentia-worker`** (`bliss-essentia-worker.exe` on Windows): existing *original Essentia C++* worker source in `native/essentia_cpp_worker.cpp`. Compiled independently using CMake against a separately provisioned pinned upstream MTG Essentia library and native codec dependencies. On-demand when the CLI selects `--audio-backend essentia --essentia-worker <path>`.
+- **`essentia-analyser`** (`essentia-analyser.exe` on Windows): existing Rust CLI for decoding/analysis orchestration, persistent feature extraction, bounded fixed and auto worker parallelism, ONNX Runtime, model fingerprinting and SQLite sidecars. The CLI binary and Cargo package now use the repository's own name. Its existing subcommands and flags remain unchanged.
+- **`essentia-worker`** (`essentia-worker.exe` on Windows): existing *original Essentia C++* worker source in `native/essentia_cpp_worker.cpp`. Compiled independently using CMake against a separately provisioned pinned upstream MTG Essentia library and native codec dependencies. On-demand when the CLI selects `--audio-backend essentia --essentia-worker <path>`.
 
 These binaries are **not** produced together automatically by `cargo build`. The C++ worker has its own prerequisites and build pipeline. Neither application is part of `essentia-similarity`: that independent project consumes **precomputed features**, not audio files or ONNX weights.
 
-## First migration: unchanged behavior
+## Application architecture and CLI
 
-The first branch copies the complete application `src/`, `native/`, model-registry, `Cargo.lock`, existing tests, technical scripts and historical scanner documentation from the frozen, audited source commit. **No changes to the native IPC protocol, feature SQLite v3 schema, exact feature keys, worker scheduling or analysis defaults.** Existing scanner binary remains named `bliss-mood` for compatibility. Changing the CLI name and cleaning the historical experiment switches is separate follow-on work after parity.
+The first branch copies the complete application `src/`, `native/`, model-registry, `Cargo.lock`, existing tests, technical scripts and historical scanner documentation from the frozen, audited source commit. **No changes to the native IPC protocol, feature SQLite v3 schema, exact feature keys, worker scheduling or analysis defaults.** The scanner's **current** Rust CLI is now `essentia-analyser` (formerly `bliss-mood`), and the native CMake worker target is `essentia-worker` (formerly `bliss-essentia-worker`). The IPC protocol, worker flags and SQLite v3 feature schema have not been changed by this executable rename. See [rename and local migration instructions](docs/executable-renaming.md).
 
 ```bash
 cargo test --locked
 cargo build --release --locked
-cargo run -- scan-features --help
+cargo run --locked -- scan-features --help
+# Windows after cargo build: .\\target\\release\\essentia-analyser.exe
 ```
 
 To use the original C++ worker, build it with the separately provisioned upstream Essentia and compiler/toolchain described in [`native/README.md`](native/README.md); then pass it explicitly to the Rust CLI. FFmpeg/ffprobe and the independently obtained ONNX model files are prerequisites as documented in the scanner's existing workflow. No third-party audio or ONNX files are vendored.

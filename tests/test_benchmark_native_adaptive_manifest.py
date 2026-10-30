@@ -143,7 +143,7 @@ class NativeAdaptiveManifestTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             opts = argparse.Namespace(
-                analyzer=root / "bliss-mood.exe", essentia_worker=root / "worker.exe",
+                analyzer=root / "essentia-analyser.exe", essentia_worker=root / "worker.exe",
                 source_root=root / "music", manifest_file=root / "tracks.txt",
                 models_dir=root / "models", models="moodtheme,genre,voice",
                 timeout_seconds=900, scan_priority="normal",
@@ -169,7 +169,7 @@ class NativeAdaptiveManifestTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             opts = argparse.Namespace(
-                analyzer=root / "bliss-mood.exe", essentia_worker=root / "worker.exe",
+                analyzer=root / "essentia-analyser.exe", essentia_worker=root / "worker.exe",
                 source_root=root / "music", manifest_file=root / "tracks.txt",
                 models_dir=root / "models", models="moodtheme,genre,voice",
                 timeout_seconds=900, scan_priority="normal",
@@ -214,7 +214,7 @@ class NativeAdaptiveManifestTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             options = argparse.Namespace(
-                analyzer=root / "bliss-mood", essentia_worker=root / "native-worker",
+                analyzer=root / "essentia-analyser", essentia_worker=root / "native-worker",
                 source_root=root / "music", manifest_file=root / "tracks.txt",
                 models_dir=root / "models", models="moodtheme,genre,voice",
                 timeout_seconds=900, scan_priority="normal",
@@ -335,8 +335,8 @@ class NativeAdaptiveManifestTests(unittest.TestCase):
                 conn.execute("INSERT INTO TracksV2 VALUES (?, ?)", (key, 0))
             conn.commit()
             conn.close()
-            exe = base / "bliss-mood.exe"
-            native = base / "bliss-essentia-worker.exe"
+            exe = base / "essentia-analyser.exe"
+            native = base / "essentia-worker.exe"
             exe.write_bytes(b"stub")
             native.write_bytes(b"stub")
             out = base / "output"

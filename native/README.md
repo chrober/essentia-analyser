@@ -18,7 +18,7 @@ On a prepared Linux host:
 ~~~sh
 cmake -S native -B build/essentia-cpp -DCMAKE_BUILD_TYPE=Release
 cmake --build build/essentia-cpp --parallel
-./build/essentia-cpp/bliss-essentia-worker </dev/null >/tmp/essentia-hello.bin
+./build/essentia-cpp/essentia-worker </dev/null >/tmp/essentia-hello.bin
 ~~~
 
 The final command should write exactly four bytes (ASCII EFW1) and then
@@ -36,7 +36,7 @@ addition to the EXE hash. Missing DLLs / changed binaries fail early.
 compiles and links as `essentia.dll` under Windows MinGW64** using the
 separately pinned FFmpeg-9-compatible upstream candidate
 `b0661db99be4a8e2c6fabbe90a996f89786fdd8e`. The actual
-`bliss-essentia-worker.exe` still **fails to link** because symbols
+`essentia-worker.exe` still **fails to link** because symbols
 such as `essentia::init()` and `essentia::Logger::debug()` are unresolved.
 See [confirmed CI run](https://github.com/chrober/bliss-mood-poc/actions/runs/39382026896)
 and [focused linker handover](../docs/handover-essentia-windows-linker-20261020.md).
@@ -51,8 +51,8 @@ Pi/aarch64 compatibility.
 & {
     $ErrorActionPreference = 'Stop'
     Set-Location 'D:\LMS\bliss-mood-poc'
-    $exe = '.\bin\bliss-mood.exe'
-    $worker = '.\bin\bliss-essentia-worker.exe'
+    $exe = '.\bin\essentia-analyser.exe'
+    $worker = '.\bin\essentia-worker.exe'
     & $exe analyze-features 'D:\Music\Example.flac' `
         --models-dir .\models `
         --models moodtheme,genre,voice `
@@ -126,4 +126,4 @@ for native children); its thresholds have not changed. Windows/ARM64
 timeout validation, real NAS load benchmarks and ARM64 packaging remain
 required before unattended large-library deployment.
 
-No merge to main without explicit user approval.
+The scanner source was extracted into `essentia-analyser`. CI and release approval remain separate; see `docs/community-project-policy.md`.

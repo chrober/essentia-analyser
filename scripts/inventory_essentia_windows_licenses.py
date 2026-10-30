@@ -89,7 +89,7 @@ def inventory(bundle, mingw, upstream, project_license, output):
         upstream_notices.append(str(dst.relative_to(output)).replace("\\", "/"))
     if not project_license.is_file():
         raise FileNotFoundError(f"Missing project license: {project_license}")
-    local = notice_root / "bliss-mood-project" / "LICENSE"
+    local = notice_root / "essentia-analyser-project" / "LICENSE"
     local.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(project_license, local)
 
@@ -100,7 +100,7 @@ def inventory(bundle, mingw, upstream, project_license, output):
             raise ValueError(f"Invalid native binary name: {filename}")
         if filename == manifest["worker_executable"]:
             binaries[filename] = {"origin": "this project, original C++ worker source",
-                                  "source": "https://github.com/chrober/bliss-mood-poc",
+                                  "source": "https://github.com/chrober/essentia-analyser",
                                   "license_notices": [str(local.relative_to(output))]}
             continue
         if filename == "essentia.dll":

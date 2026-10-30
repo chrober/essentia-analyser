@@ -1,10 +1,10 @@
 [package]
-name = "bliss-mood"
+name = "essentia-analyser"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/chrober/essentia-analyser"
-description = "Experimental music mood classification using ONNX"
+description = "Offline Essentia C++ and ONNX audio feature analyser for the Lyrion community"
 publish = false
 
 [dependencies]
