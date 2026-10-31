@@ -930,7 +930,7 @@ pub fn scan(options: ScanOptions<'_>) -> Result<ScanSummary> {
         let outcome = crate::source_guard::analyse_checked(
             &path, Some(state),
             || engine.analyze(&path, None),
-            |report| report.audio_sha256.as_str(),
+            |report| report.audio_sha256.clone(),
         ).and_then(|(report, evidence)| {
             evidence.verify_still_current(Some(state))?;
             persist_scan_output(
@@ -1096,7 +1096,7 @@ fn scan_parallel(
                                                     Err(err) => Err(err),
                                                 },
                                             },
-                        |(report, _)| report.audio_sha256.as_str(),
+                        |(report, _)| report.audio_sha256.clone(),
                     ).map(|((report, embedding), proof)| (report, embedding, proof));
                     active_analyses.fetch_sub(1, Ordering::SeqCst);
                     if tx.send((task, report)).is_err() {
