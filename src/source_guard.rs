@@ -117,11 +117,11 @@ pub(crate) fn analyse_checked<T, F, H>(
 ) -> Result<(T, SourceEvidence)>
 where
     F: FnOnce() -> Result<T>,
-    H: FnOnce(&T) -> &str,
+    H: FnOnce(&T) -> String,
 {
     let proof = SourceEvidence::begin(path, expected)?;
     let result = analyse()?;
-    proof.finish(recorded_hash(&result))?;
+    proof.finish(&recorded_hash(&result))?;
     Ok((result, proof))
 }
 
@@ -147,11 +147,11 @@ mod tests {
         fs::write(&path, b"a synthetic audio source").unwrap();
         let stat = file_state(&path);
         let rejected = analyse_checked(&path, Some(stat),
-            || Ok(17usize), |_| "3a");
+            || Ok(17usize), |_| "3a".to_owned());
         assert!(rejected.is_err(), "mismatched post-decode hash rejected");
         let expected_sha = format!("{:x}", Sha256::digest(fs::read(&path).unwrap()));
         let (value, proof) = analyse_checked(&path, Some(stat),
-            || Ok(17usize), |_| expected_sha.as_str()).unwrap();
+            || Ok(17usize), |_| expected_sha.clone()).unwrap();
         assert_eq!(value, 17);
         proof.verify_still_current(Some(stat)).unwrap();
         fs::remove_file(path).unwrap();
@@ -166,7 +166,7 @@ mod tests {
         let outcome = analyse_checked(&path, Some(stat), || {
             fs::write(&path, b"WXYZ")?;
             Ok(())
-        }, |_| after.as_str());
+        }, |_| after.clone());
         assert!(outcome.is_err());
         fs::remove_file(path).unwrap();
     }
@@ -178,7 +178,7 @@ mod tests {
         let (size, ns) = file_state(&path);
         let entered = std::cell::Cell::new(false);
         let result = analyse_checked(&path, Some((size, ns + 1)),
-            || { entered.set(true); Ok(()) }, |_| "irrelevant");
+            || { entered.set(true); Ok(()) }, |_| "irrelevant".to_owned());
         assert!(result.is_err());
         assert!(!entered.get(), "no decoder invoked on stale task");
         fs::remove_file(path).unwrap();
@@ -191,7 +191,7 @@ mod tests {
         let expected = format!("{:x}", Sha256::digest(b"ABCD"));
         let state = file_state(&path);
         let (_, proof) = analyse_checked(&path, Some(state),
-            || Ok(()), |_| expected.as_str()).unwrap();
+            || Ok(()), |_| expected.clone()).unwrap();
         fs::write(&path, b"MORE").unwrap();
         assert!(proof.verify_still_current(Some(state)).is_err());
         fs::remove_file(path).unwrap();
