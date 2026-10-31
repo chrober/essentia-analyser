@@ -146,9 +146,9 @@ mod tests {
         let path = fixture("stable");
         fs::write(&path, b"a synthetic audio source").unwrap();
         let stat = file_state(&path);
-        let (value, proof) = analyse_checked(&path, Some(stat),
+        let rejected = analyse_checked(&path, Some(stat),
             || Ok(17usize), |_| "3a");
-        assert!(value.is_err() || proof.is_err());
+        assert!(rejected.is_err(), "mismatched post-decode hash rejected");
         let expected_sha = format!("{:x}", Sha256::digest(fs::read(&path).unwrap()));
         let (value, proof) = analyse_checked(&path, Some(stat),
             || Ok(17usize), |_| expected_sha.as_str()).unwrap();
