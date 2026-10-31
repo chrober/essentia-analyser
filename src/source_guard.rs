@@ -192,7 +192,7 @@ mod tests {
         let state = file_state(&path);
         let (_, proof) = analyse_checked(&path, Some(state),
             || Ok(()), |_| expected.clone()).unwrap();
-        fs::write(&path, b"MORE").unwrap();
+        fs::write(&path, b"MORE CHANGED SOURCE BYTES").unwrap();
         assert!(proof.verify_still_current(Some(state)).is_err());
         fs::remove_file(path).unwrap();
     }
