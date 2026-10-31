@@ -384,7 +384,7 @@ fn main() -> Result<()> {
             let report = if db.is_some() {
                 source_guard::analyse_checked(&source, None,
                     || analyze(&source, &models_dir, max_patches, threads),
-                    |r| r.audio_sha256.as_str(),
+                    |r| r.audio_sha256.clone(),
                 )?.0
             } else {
                 analyze(&source, &models_dir, max_patches, threads)?
@@ -423,7 +423,7 @@ fn main() -> Result<()> {
             let report = if db.is_some() {
                 source_guard::analyse_checked(&source, None,
                     || engine.analyze(&source, max_patches),
-                    |r| r.audio_sha256.as_str(),
+                    |r| r.audio_sha256.clone(),
                 )?.0
             } else {
                 engine.analyze(&source, max_patches)?
