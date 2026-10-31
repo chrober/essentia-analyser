@@ -1,6 +1,7 @@
 mod preprocess;
 mod audio_decode;
 mod storage;
+mod source_guard;
 mod engine;
 mod batch;
 mod features;
@@ -380,8 +381,18 @@ fn main() -> Result<()> {
             if db.is_some() != track_key.is_some() {
                 bail!("--db and --track-key must be specified together");
             }
-            let report = analyze(&source, &models_dir, max_patches, threads)?;
+            let (report, evidence) = if db.is_some() {
+                let (report, proof) = source_guard::analyse_checked(&source, None,
+                    || analyze(&source, &models_dir, max_patches, threads),
+                    |r| r.audio_sha256.clone(),
+                )?;
+                (report, Some(proof))
+            } else {
+                (analyze(&source, &models_dir, max_patches, threads)?, None)
+            };
             if let (Some(db_path), Some(key)) = (db.as_deref(), track_key.as_deref()) {
+                evidence.as_ref().context("Missing source stability evidence")?
+                    .verify_still_current(None)?;
                 storage::persist(db_path, key, &report)?;
             }
             if json {
@@ -412,8 +423,18 @@ fn main() -> Result<()> {
             let mut profiles = features::load_profiles(&models_dir, registry.as_deref(), &models)?;
             features::retarget_profiles(&mut profiles, &backend)?;
             let mut engine = features::FeatureEngine::with_backend(profiles, threads, &backend)?;
-            let report = engine.analyze(&source, max_patches)?;
+            let (report, evidence) = if db.is_some() {
+                let (report, proof) = source_guard::analyse_checked(&source, None,
+                    || engine.analyze(&source, max_patches),
+                    |r| r.audio_sha256.clone(),
+                )?;
+                (report, Some(proof))
+            } else {
+                (engine.analyze(&source, max_patches)?, None)
+            };
             if let (Some(db), Some(key)) = (db.as_deref(), track_key.as_deref()) {
+                evidence.as_ref().context("Missing source stability evidence")?
+                    .verify_still_current(None)?;
                 features::persist(db, key, &report, None)?;
             }
             if json {
