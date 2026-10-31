@@ -169,7 +169,7 @@ pub fn scan(options: ScanOptions<'_>) -> Result<ScanSummary> {
         let result = crate::source_guard::analyse_checked(
             &source, Some((size, modified)),
             || engine.as_mut().expect("model initialized").analyze(&source, None),
-            |report| report.audio_sha256.as_str(),
+            |report| report.audio_sha256.clone(),
         );
         match result.and_then(|(report, evidence)| {
             // The scanner's original bytes must remain unchanged both during
