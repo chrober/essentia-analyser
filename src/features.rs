@@ -927,7 +927,12 @@ pub fn scan(options: ScanOptions<'_>) -> Result<ScanSummary> {
             summary.model_sessions_initialized = true;
         }
         let engine = engine.as_mut().expect("engine available");
-        let outcome = engine.analyze(&path, None).and_then(|report| {
+        let outcome = crate::source_guard::analyse_checked(
+            &path, Some(state),
+            || engine.analyze(&path, None),
+            |report| report.audio_sha256.as_str(),
+        ).and_then(|(report, evidence)| {
+            evidence.verify_still_current(Some(state))?;
             persist_scan_output(
                 conn.as_mut().expect("writable feature database"), &track, state,
                 &report, engine.take_song_embedding(), options.embedding_dir,
@@ -957,7 +962,7 @@ struct FeatureJob {
 
 type FeatureCompletion = (
     FeatureJob,
-    Result<(FeatureReport, Option<crate::song_embedding::SongEmbedding>)>,
+    Result<(FeatureReport, Option<crate::song_embedding::SongEmbedding>, crate::source_guard::SourceEvidence)>,
 );
 
 #[derive(Clone, Copy)]
@@ -976,9 +981,12 @@ fn save_completion(
 ) -> Result<()> {
     let (job, result) = rx.recv().context("All feature workers exited before returning results")?;
     match result {
-        Ok((report, embedding)) => match persist_scan_output(
-            conn, &job.track, job.state, &report, embedding, policy.embedding_dir,
-        ) {
+        Ok((report, embedding, evidence)) => match evidence
+            .verify_still_current(Some(job.state))
+            .and_then(|()| persist_scan_output(
+                conn, &job.track, job.state, &report, embedding, policy.embedding_dir,
+            ))
+        {
             Ok(()) => {
                 diagnostics.add(&report);
                 summary.analyzed += 1;
@@ -1068,24 +1076,28 @@ fn scan_parallel(
                     };
                     let active = active_analyses.fetch_add(1, Ordering::SeqCst) + 1;
                     peak_active_analyses.fetch_max(active, Ordering::SeqCst);
-                    let report = match engine.as_mut() {
-                        Some(engine) => engine.analyze(&task.path, None)
-                            .map(|report| (report, engine.take_song_embedding())),
-                        None => match FeatureEngine::with_backend(
-                            profiles.clone(), options.threads, &backend,
-                        ) {
-                            Ok(mut created) => {
-                                if options.embedding_dir.is_some() {
-                                    created.request_song_embedding();
-                                }
-                                let result = created.analyze(&task.path, None)
-                                    .map(|report| (report, created.take_song_embedding()));
-                                engine = Some(created);
-                                result
-                            }
-                            Err(err) => Err(err),
-                        },
-                    };
+                    let report = crate::source_guard::analyse_checked(
+                        &task.path, Some(task.state),
+                        || match engine.as_mut() {
+                                                Some(engine) => engine.analyze(&task.path, None)
+                                                    .map(|report| (report, engine.take_song_embedding())),
+                                                None => match FeatureEngine::with_backend(
+                                                    profiles.clone(), options.threads, &backend,
+                                                ) {
+                                                    Ok(mut created) => {
+                                                        if options.embedding_dir.is_some() {
+                                                            created.request_song_embedding();
+                                                        }
+                                                        let result = created.analyze(&task.path, None)
+                                                            .map(|report| (report, created.take_song_embedding()));
+                                                        engine = Some(created);
+                                                        result
+                                                    }
+                                                    Err(err) => Err(err),
+                                                },
+                                            },
+                        |(report, _)| report.audio_sha256.as_str(),
+                    ).map(|((report, embedding), proof)| (report, embedding, proof));
                     active_analyses.fetch_sub(1, Ordering::SeqCst);
                     if tx.send((task, report)).is_err() {
                         break;
