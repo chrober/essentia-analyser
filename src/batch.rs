@@ -166,9 +166,15 @@ pub fn scan(options: ScanOptions<'_>) -> Result<ScanSummary> {
             engine = Some(MoodEngine::new(profile.take().expect("profile only loaded once"), options.threads)?);
             summary.model_sessions_initialized = true;
         }
-        let result = engine.as_mut().expect("model initialized").analyze(&source, None);
-        match result.and_then(|report| {
-            // New scores are committed only after all model stages succeed.
+        let result = crate::source_guard::analyse_checked(
+            &source, Some((size, modified)),
+            || engine.as_mut().expect("model initialized").analyze(&source, None),
+            |report| report.audio_sha256.as_str(),
+        );
+        match result.and_then(|(report, evidence)| {
+            // The scanner's original bytes must remain unchanged both during
+            // inference and just before the separate SQLite transaction.
+            evidence.verify_still_current(Some((size, modified)))?;
             storage::persist_scanned(conn.as_mut().expect("writable db in non-dry-run"), &track, &report, size, modified)
         }) {
             Ok(()) => {
