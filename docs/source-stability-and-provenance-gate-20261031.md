@@ -1,5 +1,25 @@
 # Scanner source stability and provider provenance — 31 October 2026
 
+## First integration direction: independent manual Windows analysis
+
+The user's 65k+ song library is initially analyzed by **manual
+`scan-features` runs on Windows**, not by automatic post-library-update
+jobs on the Raspberry Pi 4B. No `rescan` hook, `lastscan`-based
+scheduler or automatic Lyrion invocation is in scope now. A
+transactionally consistent Bliss snapshot can be manually prepared,
+and a completed SQLite-v3 feature snapshot can be manually
+transferred back to the Pi for **passive** Guidance SPI v2 research.
+
+Partial coverage and incremental manual Windows batches are allowed;
+no scan of all 65k+ files is needed before a first seed/candidate
+proof. The source-stability guard in this Draft is scanner safety
+hardening and **does not** connect the scanner to Lyrion events.
+An immutable cross-machine catalog epoch or automated rescan
+workflow is explicitly deferred from the first passive integration.
+
+[Windows manual scan runbook]
+(windows-manual-offline-scan-first-integration-20261031.md).
+
 Status: **experimental implementation**, [Draft PR #6](https://github.com/chrober/essentia-analyser/pull/6). No merge to `main` or live Lyrion provider enablement.
 
 ## Problem
