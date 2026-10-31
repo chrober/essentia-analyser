@@ -1,7 +1,10 @@
 name: Rust scanner and native IPC fixture (no redistributed binaries)
 
 on:
+  # PR branches run on pull_request only; avoid duplicate push and PR runs.
   push:
+    branches:
+      - main
     paths-ignore:
       - 'docs/**'
       - '**.md'
